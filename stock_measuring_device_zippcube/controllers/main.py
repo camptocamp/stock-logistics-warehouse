@@ -57,4 +57,4 @@ class ZippcubeController(http.Controller):
         if secret and secret == self._device_get_secret():
             return True
         else:
-            return AccessError()
+            raise AccessError("ZIPPCUBE_SECRET is wrong or missing")
