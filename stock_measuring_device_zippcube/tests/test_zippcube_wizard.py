@@ -91,7 +91,7 @@ class TestZippcubeWizard(SavepointComponentCase):
                     "width": 1000,
                     "height": 1000,
                     "max_weight": 3.0 ** idx,
-                    "volume": 2.0 * idx,
+                    "volume": 2.0 ** idx,
                 },
             )
 
@@ -128,7 +128,7 @@ class TestZippcubeWizard(SavepointComponentCase):
                     "lngth": (2 ** idx) * 1000,
                     "width": 1000,
                     "height": 1000,
-                    "max_weight": 3.0 * idx,
+                    "max_weight": 3.0 ** idx,
                     "volume": 2.0 ** idx,
                 },
             )
