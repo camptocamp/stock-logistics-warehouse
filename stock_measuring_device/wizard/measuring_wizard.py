@@ -152,6 +152,9 @@ class MeasuringWizard(models.TransientModel):
 
     def action_close(self):
         self.ensure_one()
+        for line in self.line_ids.filtered(lambda l: l.scan_requested):
+            line.packaging_id._measuring_device_release()
+            line.scan_requested = False
         return {
             "type": "ir.actions.act_window",
             "res_model": self.device_id._name,
