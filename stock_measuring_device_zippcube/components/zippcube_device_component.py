@@ -36,6 +36,5 @@ class ZippcubeDevice(Component):
         # wizard_line is only set when measurements are made from the measurement
         # device wizard.
         if wizard_line:
-            wizard_line.wizard_id._notify(_("Please, press the REFRESH button."))
-        wizard_line.wizard_id._send_notification_refresh()
+            wizard_line.wizard_id._send_notification_refresh()
         packaging._measuring_device_release()
