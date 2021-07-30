@@ -41,7 +41,13 @@ class StockWarehouseOrderpoint(models.Model):
 
     @api.depends("product_min_qty", "product_id", "qty_multiple")
     def _compute_procure_recommended(self):
-        op_qtys = self._quantity_in_progress()
+        # '_quantity_in_progress' maps IDs to a qty, but in a computed method
+        # we can not rely on IDs (computed records could have a NewId object)
+        # This avoids a KeyError triggered by 'purchase_stock' which
+        # filters orderpoints with a 'search' call, and use the fetched record
+        # IDs (actual ones) as keys on the '_quantity_in_progress' result
+        # having 'NewId(origin=...)' keys only
+        op_qtys = self.with_context(handle_newid=True)._quantity_in_progress()
         for op in self:
             qty = 0.0
             virtual_qty = op.with_context(
@@ -58,3 +64,17 @@ class StockWarehouseOrderpoint(models.Model):
                 qty = op._get_procure_recommended_qty(virtual_qty, op_qtys)
             op.procure_recommended_qty = qty
             op.procure_recommended_date = op._get_date_planned(qty, datetime.today())
+
+    def _quantity_in_progress(self):
+        # Overloaded to handle NewID instances.
+        # Required when this method is called from a compute method
+        if self.env.context.get("handle_newid"):
+            actual_ids = []
+            for op in self:
+                if isinstance(op.id, models.NewId):
+                    if op.id.origin:
+                        actual_ids.append(op.id.origin)
+                    # Skip NewID without origin: this case should not occurs
+            # Duplicate records having NewIds to satisfy key lookup in upcoming calls
+            self |= self.browse(actual_ids)
+        return super(StockWarehouseOrderpoint, self)._quantity_in_progress()
