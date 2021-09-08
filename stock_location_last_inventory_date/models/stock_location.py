@@ -17,7 +17,7 @@ class StockLocation(models.Model):
         for location in self:
             location_ids = [
                 int(location_id)
-                for location_id in self.parent_path.rstrip("/").split("/")
+                for location_id in location.parent_path.rstrip("/").split("/")
             ]
             last_inventory = self.env["stock.inventory"].search(
                 [("location_ids", "in", location_ids), ("state", "=", "done")],
