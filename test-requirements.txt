@@ -1,0 +1,2 @@
+odoo14-addon-stock_location_zone @ git+https://github.com/phuctranerp/stock-logistics-warehouse.git@14.0-mig-stock_location_zone#subdirectory=setup/stock_location_zone
+odoo14-addon-stock_location_position @ git+https://github.com/phuctranerp/stock-logistics-warehouse.git@14.0-mig-stock_location_position#subdirectory=setup/stock_location_position
