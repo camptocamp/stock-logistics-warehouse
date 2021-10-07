@@ -2,7 +2,10 @@
 # Copyright 2021 Jacques-Etienne Baudoux (BCIM) <je@bcim.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
+import logging
 from odoo import api, models
+
+_logger = logging.getLogger(__name__)
 
 
 class ProcurementGroup(models.Model):
@@ -19,7 +22,17 @@ class ProcurementGroup(models.Model):
             and rule.auto_create_group
             and values.get("date_planned")
         ):
-            group_data = rule._prepare_auto_procurement_group_data()
+            group_data = self._prepare_auto_procurement_group_data()
+            if group_data:
+                _logger.warning(
+                    "DEPRECATED: use _prepare_auto_procurement_group_data on stock rule instead"
+                )
+            group_data.update(rule._prepare_auto_procurement_group_data())
             group = self.env["procurement.group"].create(group_data)
             values["group_id"] = group
         return rule
+
+    @api.model
+    def _prepare_auto_procurement_group_data(self):
+        """ Deprecated """
+        return {}
