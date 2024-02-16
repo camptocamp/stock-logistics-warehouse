@@ -86,7 +86,11 @@ class VerticalLiftShuttle(models.Model):
 
         self.env["vertical.lift.command"].sudo().create(command_values)
         if self.hardware == "simulation":
-            self.env.user.notify_info(message=payload, title=_("Lift Simulation"))
+            self.env.user.notify_info(
+                message=payload,
+                title=_("Lift Simulation"),
+                params=self._get_user_notification_params(),
+            )
             return True
         else:
             conn = self._hardware_get_server_connection()
@@ -259,3 +263,18 @@ class VerticalLiftShuttle(models.Model):
         """
         # XXX do we want to do something special in the notification?
         self._operation_for_mode()._send_notification_refresh()
+
+    def _get_user_notification_params(self):
+        self.ensure_one()
+        return {
+            "model": self._name,
+            "id": self.id,
+            "shuttle_info": self._get_user_notification_params_shuttle_info(),
+        }
+
+    def _get_user_notification_params_shuttle_info(self):
+        self.ensure_one()
+        info = {self._name: self.id}
+        for model in self._model_for_mode.values():
+            info[model] = self.env[model].search([("shuttle_id", "=", self.id)]).id
+        return info
