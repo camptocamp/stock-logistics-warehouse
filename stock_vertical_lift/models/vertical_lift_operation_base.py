@@ -354,7 +354,6 @@ class VerticalLiftOperationBase(models.AbstractModel):
         self.env["bus.bus"].sendone(channel, bus_message)
 
     def _get_user_notification_params(self):
-        self.ensure_one()
         return {
             "model": self._name,
             "id": self.id,
@@ -362,7 +361,6 @@ class VerticalLiftOperationBase(models.AbstractModel):
         }
 
     def _get_user_notification_params_shuttle_info(self):
-        self.ensure_one()
         return self.shuttle_id._get_user_notification_params_shuttle_info()
 
 

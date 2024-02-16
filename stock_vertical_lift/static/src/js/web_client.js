@@ -8,7 +8,7 @@ odoo.define("stock_vertical_lift.WebClient", function (require) {
 
     WebClient.include({
         /**
-         * Override method to split notifications
+         * Override method to filter out shuttle notifications that are not for the current device
          *
          * @override
          **/
@@ -24,17 +24,13 @@ odoo.define("stock_vertical_lift.WebClient", function (require) {
                 // 1) they're not shuttle-related
                 // 2) they're included in the filtered shuttle notifications
                 // NB: using ``filter`` allows keeping notifications' order
-                this._super(
-                    notifications.filter(
-                        (n) =>
-                            !this.is_shuttle_notification(n) ||
-                            filtered_shuttle_notifications.indexOf(n) !== -1
-                    )
+                notifications = notifications.filter(
+                    (n) =>
+                        !this.is_shuttle_notification(n) ||
+                        filtered_shuttle_notifications.indexOf(n) !== -1
                 );
-            } else {
-                // No shuttle notification found, just call ``_super()``
-                this._super(notifications);
             }
+            this._super(notifications);
         },
 
         is_shuttle_notification: function (notification) {

@@ -265,7 +265,6 @@ class VerticalLiftShuttle(models.Model):
         self._operation_for_mode()._send_notification_refresh()
 
     def _get_user_notification_params(self):
-        self.ensure_one()
         return {
             "model": self._name,
             "id": self.id,
@@ -273,8 +272,31 @@ class VerticalLiftShuttle(models.Model):
         }
 
     def _get_user_notification_params_shuttle_info(self):
-        self.ensure_one()
+        """Returns a mapping between shuttle-related models and IDs
+
+        Used by JS to filter notifications to be displayed: this mapping is
+        set on all shuttle-related notifications, and JS takes care of comparing
+        the current web page info (model and ID) with the mapping held by each
+        notification.
+
+        IE: a notification is generated with this mapping:
+            {
+                "vertical.lift.shuttle": 1,
+                "vertical.lift.operation.inventory": 3,
+                "vertical.lift.operation.pick": 2,
+                "vertical.lift.operation.put": 4,
+            }
+        On web page <host>/web#id=2&model=vertical.lift.operation.pick&view_type=form
+        the notification is displayed (form view with matching model and ID).
+        On web page <host>/web#id=1&model=vertical.lift.operation.pick&view_type=form
+        the notification is not displayed (form view with matching model, but wrong ID).
+        """
         info = {self._name: self.id}
+        # Property ``_model_for_mode`` holds a mapping between shuttle mode and related
+        # shuttle mode specific models (``vertical.lift.operation.*``); most of the
+        # views on which shuttle notifications are triggered usually display one of
+        # these records, not a ``vertical.lift.shuttle`` one, therefore appending the
+        # shuttle ID to the notification itself may not be enough.
         for model in self._model_for_mode.values():
             info[model] = self.env[model].search([("shuttle_id", "=", self.id)]).id
         return info
