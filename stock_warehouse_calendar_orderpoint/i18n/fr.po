@@ -1,0 +1,160 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* stock_warehouse_calendar_orderpoint
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-24 12:50+0000\n"
+"PO-Revision-Date: 2024-05-24 12:50+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_stock_warehouse__orderpoint_calendar_id
+msgid "Calendar used to compute the lead date of reordering rules"
+msgstr "Calendrier pour calculer les dates de réapprovisionnement selon les règles de réapprovisionnement"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_cosaflow_location__orderpoint_calendar_id
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_res_company__orderpoint_calendar_id
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_res_config_settings__orderpoint_calendar_id
+msgid ""
+"Calendar used to compute the lead date of reordering rules\n"
+"This value will be used as default value for new warehouses linked to this company"
+msgstr "Calendrier pour calculer les dates de réapprovisionnement selon les règles de réapprovisionnement\n"
+"La configuration s'utilisera comme défaut sur les nouveaux entrepôts liés à cette société"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model_terms:ir.ui.view,arch_db:stock_warehouse_calendar_orderpoint.res_config_settings_view_form
+msgid ""
+"Calendar used to compute the lead date of reordering rules.<br/>\n"
+"                          These parameters are global and can be overriden on each of the warehouses."
+msgstr ""
+"Calendrier pour calculer les dates de réapprovisionnement selon les règles de réapprovisionnement.<br/>\n"
+"                          Ces paramètres sont globales et peuvent être modifiés pour chaque entrepôt."
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model,name:stock_warehouse_calendar_orderpoint.model_res_company
+msgid "Companies"
+msgstr "Sociétés"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model,name:stock_warehouse_calendar_orderpoint.model_res_config_settings
+msgid "Config Settings"
+msgstr "Paramètres de config"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_company__display_name
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_rule__display_name
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse__display_name
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse_orderpoint__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_company__id
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_config_settings__id
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_rule__id
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse__id
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse_orderpoint__id
+msgid "ID"
+msgstr ""
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_company____last_update
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_config_settings____last_update
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_rule____last_update
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse____last_update
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse_orderpoint____last_update
+msgid "Last Modified on"
+msgstr "Dernière modification le"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model,name:stock_warehouse_calendar_orderpoint.model_stock_warehouse_orderpoint
+msgid "Minimum Inventory Rule"
+msgstr "Règle de stock minimum."
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_stock_warehouse__orderpoint_on_workday_policy
+msgid ""
+"Policy to postpone the lead date to the first available workday:\n"
+"* skip to first workday: compute the date using lead delay days as solar days, then skip to the next workday if the result is not a workday (eg: run action on Friday with 2 days lead delay -> the result is Sunday -> skip to the first following workday, Monday)\n"
+"* skip non-workdays: compute the order date consuming lead delay days only on (eg: run action on Friday with 2 days lead delay -> skip Saturday and Sunday -> start consuming lead days on Monday as first lead day -> the result is Tuesday)"
+msgstr ""
+"Reporter la date de livraison au premier jour ouvré disponible:\n"
+"* jours de repos incluts: le calcul de la date inclut les jours ouvrés et les jours de repos, si la date calculée tombe sur un jour de repos, elle est reportée au premier jour ouvré disponible "
+"(p.ex.: commande le vendredi avec 2 jours de délai -> date calculée est dimanche -> reporte à lundi)"
+"* jours de repos exclus: le calcul de la date n'inclut pas les jours de repos "
+"(p.ex. commande le vendredi avec 2 jours de délai -> date calculée est mardi (samedi et dimanche exclut)"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_cosaflow_location__orderpoint_on_workday_policy
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_res_company__orderpoint_on_workday_policy
+#: model:ir.model.fields,help:stock_warehouse_calendar_orderpoint.field_res_config_settings__orderpoint_on_workday_policy
+msgid ""
+"Policy to postpone the lead date to the first available workday:\n"
+"* skip to first workday: compute the date using lead delay days as solar days, then skip to the next workday if the result is not a workday (eg: run action on Friday with 2 days lead delay -> the result is Sunday -> skip to the first following workday, Monday)\n"
+"* skip non-workdays: compute the order date consuming lead delay days only on (eg: run action on Friday with 2 days lead delay -> skip Saturday and Sunday -> start consuming lead days on Monday as first lead day -> the result is Tuesday)\n"
+"This value will be used as default value for new warehouses linked to this company"
+msgstr ""
+"Reporter la date de livraison au premier jour ouvré disponible:\n"
+"* jours de repos incluts: le calcul de la date inclut les jours ouvrés et les jours de repos, si la date calculée tombe sur un jour de repos, elle est reportée au premier jour ouvré disponible "
+"(p.ex.: commande le vendredi avec 2 jours de délai -> date calculée est dimanche -> reporte à lundi)"
+"* jours de repos exclus: le calcul de la date n'inclut pas les jours de repos "
+"(p.ex. commande le vendredi avec 2 jours de délai -> date calculée est mardi (samedi et dimanche exclut)"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_cosaflow_location__orderpoint_calendar_id
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_company__orderpoint_calendar_id
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_config_settings__orderpoint_calendar_id
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse__orderpoint_calendar_id
+msgid "Reordering Calendar"
+msgstr "Calendrier de Réapprovisionnement"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: code:addons/stock_warehouse_calendar_orderpoint/models/stock_rule.py:0
+#, python-format
+msgid "Reordering Date"
+msgstr "Date de Réapprovisionnement"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_cosaflow_location__orderpoint_on_workday_policy
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_company__orderpoint_on_workday_policy
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_res_config_settings__orderpoint_on_workday_policy
+#: model:ir.model.fields,field_description:stock_warehouse_calendar_orderpoint.field_stock_warehouse__orderpoint_on_workday_policy
+msgid "Reordering on Workday Policy"
+msgstr "Réapprovisionner les jours ouvrets"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model_terms:ir.ui.view,arch_db:stock_warehouse_calendar_orderpoint.res_config_settings_view_form
+msgid "Reordering schedule"
+msgstr "Plan de réapprovisionnement"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields.selection,name:stock_warehouse_calendar_orderpoint.selection__res_company__orderpoint_on_workday_policy__skip_all_non_workdays
+#: model:ir.model.fields.selection,name:stock_warehouse_calendar_orderpoint.selection__stock_warehouse__orderpoint_on_workday_policy__skip_all_non_workdays
+msgid "Skip non-workdays"
+msgstr "Jours de repos exclus"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model.fields.selection,name:stock_warehouse_calendar_orderpoint.selection__res_company__orderpoint_on_workday_policy__skip_to_first_workday
+#: model:ir.model.fields.selection,name:stock_warehouse_calendar_orderpoint.selection__stock_warehouse__orderpoint_on_workday_policy__skip_to_first_workday
+msgid "Skip to first workday"
+msgstr "Jours de repos incluts"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model,name:stock_warehouse_calendar_orderpoint.model_stock_rule
+msgid "Stock Rule"
+msgstr "Règle de stock minimum"
+
+#. module: stock_warehouse_calendar_orderpoint
+#: model:ir.model,name:stock_warehouse_calendar_orderpoint.model_stock_warehouse
+msgid "Warehouse"
+msgstr "Entrepôt"
