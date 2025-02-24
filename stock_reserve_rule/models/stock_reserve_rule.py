@@ -298,8 +298,12 @@ class StockReserveRuleRemoval(models.Model):
 
                 # check if quantity is enough for packaging
                 if is_greater_eq(location_quantity, packaging_quantity):
-                    # compute how much packaging we can get
-                    take = (need // packaging_quantity) * packaging_quantity
+                    # compute how many packagings we can get
+                    available_packagings = location_quantity // packaging_quantity
+                    need_packagings = need // packaging_quantity
+                    take = (
+                        min(available_packagings, need_packagings) * packaging_quantity
+                    )
                     need = yield location, location_quantity, take, None, None
 
     def _apply_strategy_full_bin(self, quants):
