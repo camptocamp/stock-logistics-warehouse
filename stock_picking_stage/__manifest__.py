@@ -1,0 +1,24 @@
+# Copyright 2025 Camptocamp SA
+# @author: Italo LOPES <italo.lopes@camptocamp.com>
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl)
+
+{
+    "name": "Stock Picking Stages",
+    "version": "18.0.1.0.0",
+    "author": "Camptocamp, " "Odoo Community Association (OCA)",
+    "category": "Warehouse Management",
+    "website": "https://github.com/OCA/stock-logistics-warehouse",
+    "license": "AGPL-3",
+    "depends": ["stock"],
+    "data": [
+        "security/ir.model.access.csv",
+        "views/stock_picking_view.xml",
+        "views/stock_picking_stage_view.xml",
+    ],
+    "assets": {
+        "web.assets_backend": [
+            "stock_picking_stage/static/src/components/environment_ribbon/*",
+        ],
+    },
+    "installable": True,
+}
