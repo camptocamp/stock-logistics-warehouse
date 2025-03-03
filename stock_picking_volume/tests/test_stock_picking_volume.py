@@ -53,7 +53,7 @@ class TestStockPickingVolume(TransactionCase):
                 "product_height": height,
                 "uom_id": cls.env.ref("uom.product_uom_unit").id,
                 "dimensional_uom_id": cls.env.ref("uom.product_uom_meter").id,
-                "type": "product",
+                "is_storable": True,
             }
         )
         return product
