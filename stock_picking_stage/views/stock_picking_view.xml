@@ -14,9 +14,9 @@
             <div name="button_box" position="after">
                 <widget
                     name="picking_stage_ribbon"
-                    field_name="picking_stage_code"
-                    bg_color_field="picking_stage_color"
-                    invisible="not id or not (picking_stage_id or picking_stage_code)"
+                    field_name="stage_code"
+                    bg_color_field="stage_color"
+                    invisible="not id or not (stage_id or stage_code)"
                 />
             </div>
         </field>
