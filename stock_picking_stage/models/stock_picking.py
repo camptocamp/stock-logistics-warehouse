@@ -9,5 +9,5 @@ class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     stage_id = fields.Many2one("stock.picking.stage", index=True, tracking=True)
-    stage_code = fields.Char(related="picking_stage_id.code")
-    stage_color = fields.Integer(related="picking_stage_id.color")
+    stage_code = fields.Char(related="stage_id.code")
+    stage_color = fields.Integer(related="stage_id.color")
