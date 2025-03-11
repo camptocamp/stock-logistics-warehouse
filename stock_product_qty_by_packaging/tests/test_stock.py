@@ -16,7 +16,7 @@ class TestStock(TestCommon):
         )
         cls.wh = cls.env.ref("stock.warehouse0")
         cls.picking_type = cls.wh.out_type_id
-        cls.product_a.type = "product"
+        cls.product_a.write({"type": "consu", "is_storable": True})
         cls.env["stock.quant"]._update_available_quantity(
             cls.product_a, cls.stock_location, 2825
         )
@@ -35,7 +35,7 @@ class TestStock(TestCommon):
         cls.move._assign_picking()
         cls.move._action_assign()
         cls.move_line = cls.move.move_line_ids[0]
-        cls.move_line.reserved_uom_qty = 1470
+        cls.move_line.quantity = 1470
         cls.quant = cls.env["stock.quant"].create(
             {
                 "location_id": cls.stock_location.id,
