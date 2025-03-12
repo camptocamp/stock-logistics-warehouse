@@ -10,4 +10,4 @@ class StockMove(models.Model):
     _name = "stock.move"
     _inherit = ["stock.move", "product.qty_by_packaging.mixin"]
 
-    _qty_by_pkg__qty_field_name = "product_uom_qty"
+    _qty_by_pkg__qty_field_name = "product_qty"
