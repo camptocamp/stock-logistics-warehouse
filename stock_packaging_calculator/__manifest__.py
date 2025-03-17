@@ -11,5 +11,10 @@
     "license": "LGPL-3",
     "application": False,
     "installable": True,
-    "depends": ["product"],
+    "depends": ["product_packaging_calculator"],
+    "external_dependencies": {
+        "python": [
+            "openupgradelib",
+        ],
+    },
 }
