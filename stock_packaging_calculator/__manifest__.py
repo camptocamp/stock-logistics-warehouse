@@ -11,5 +11,5 @@
     "license": "LGPL-3",
     "application": False,
     "installable": True,
-    "depends": ["product"],
+    "depends": ["product_packaging_calculator"],
 }
