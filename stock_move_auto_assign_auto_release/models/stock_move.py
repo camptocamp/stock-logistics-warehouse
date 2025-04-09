@@ -57,19 +57,28 @@ class StockMove(models.Model):
             domain = [("id", "not in", self.search(domain).ids)]
         return domain
 
-    def _enqueue_auto_assign(self, product, locations, **job_options):
-        job = super()._enqueue_auto_assign(product, locations, **job_options)
+    def _filter_auto_releaseable_locations(self, locations):
+        return locations
+
+    def _enqueue_auto_assign_auto_release(self, product, locations, **job_options):
+        auto_releaseable_locations = self._filter_auto_releaseable_locations(locations)
         job_options = job_options.copy()
         job_options.setdefault(
             "description",
             _(
                 'Try releasing "%(product)s" for quantities added in: %(locations)s',
                 product=product.display_name,
-                locations=", ".join(locations.mapped("name")),
+                locations=", ".join(auto_releaseable_locations.mapped("name")),
             ),
         )
         job_options.setdefault("identity_key", identity_exact)
         delayable = product.delayable(**job_options)
-        release_job = delayable.pickings_auto_release()
+        return delayable.pickings_auto_release()
+
+    def _enqueue_auto_assign(self, product, locations, **job_options):
+        release_job = self._enqueue_auto_assign_auto_release(
+            product, locations, **job_options
+        )
+        job = super()._enqueue_auto_assign(product, locations, **job_options)
         job.on_done(release_job)
         return job
