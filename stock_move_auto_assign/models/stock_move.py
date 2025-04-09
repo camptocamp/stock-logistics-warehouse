@@ -54,10 +54,12 @@ class StockMove(models.Model):
         for product_id, location_ids in product_locs.items():
             if not location_ids:
                 continue
-            self._enqueue_auto_assign(
+            job = self._enqueue_auto_assign(
                 self.env["product.product"].browse(product_id),
                 self.env["stock.location"].browse(location_ids),
-            ).delay()
+            )
+            if job:
+                job.delay()
 
     def _enqueue_auto_assign(self, product, locations, **job_options):
         """Enqueue a job ProductProduct.moves_auto_assign()
