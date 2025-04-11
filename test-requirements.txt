@@ -1,0 +1,1 @@
+odoo-addon-stock_move_auto_assign_auto_release@ git+https://github.com/OCA/stock-logistics-warehouse.git@refs/pull/2314/head#subdirectory=setup/stock_move_auto_assign_auto_release
