@@ -1,6 +1,8 @@
 # Copyright 2022 Camptocamp SA
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl)
 
+from dateutil.relativedelta import relativedelta
+
 from odoo import api, fields, models
 
 
@@ -56,3 +58,29 @@ class StockWarehouse(models.Model):
         if vals.get("company_id"):
             self = self.with_context(force_wh_company=vals["company_id"])
         return super().create(vals)
+
+    def _get_lead_date(self, date_order, lead_days):
+        self.ensure_one()
+        # Get the WH calendar
+        calendar = self.calendar_id
+        if not calendar:
+            # No WH calendar defined => consume ``lead_days`` as solar days
+            return date_order + relativedelta(days=lead_days or 0)
+        if not lead_days:
+            # Get the first workday for the WH calendar
+            days = 1
+            date_ref = date_order
+        elif self.orderpoint_on_workday_policy == "skip_all_non_workdays":
+            # Get the first workday for the WH calendar after consuming the
+            # ``lead_days`` as workdays (for the WH calendar itself) starting
+            # from the day after the reordering date itself
+            days = lead_days
+            date_ref = date_order + relativedelta(days=1)
+        else:
+            # Get the first workday for the WH calendar after consuming the
+            # ``lead_days`` as solar days
+            # (This is the behavior for policy ``skip_to_first_workday``, but
+            # also a fallback in case the policy is not defined)
+            days = 1
+            date_ref = date_order + relativedelta(days=lead_days)
+        return calendar.plan_days(days, date_ref, compute_leaves=True)
