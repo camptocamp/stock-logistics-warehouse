@@ -1,6 +1,6 @@
-============================
-Vertical Lift Packaging type
-============================
+=============================
+Vertical Lift Packaging level
+=============================
 
 .. 
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -28,11 +28,11 @@ Vertical Lift Packaging type
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
 
-Glue module for product_packaging_type (from OCA/product-attribute) and
+Glue module for product_packaging_level (from OCA/product-attribute) and
 stock_vertical_lift.
 
 If both module are installed this module automatically gets installed
-and displays the packaging type's full name instead of the packaging's
+and displays the packaging level's full name instead of the packaging's
 name.
 
 .. IMPORTANT::
