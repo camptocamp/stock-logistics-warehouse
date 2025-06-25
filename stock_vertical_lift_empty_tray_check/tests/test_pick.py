@@ -31,7 +31,7 @@ class TestPick(VerticalLiftCase):
         self.assertEqual(operation.state, "release")
         self.assertEqual(operation.tray_qty, 0)
 
-        old_inventories = self.env["stock.inventory"].search([])
+        old_quants = self.env["stock.quant"].search([])
 
         res_dict = operation.button_release()
         wizard = self.env[(res_dict.get("res_model"))].browse(res_dict.get("res_id"))
@@ -43,8 +43,8 @@ class TestPick(VerticalLiftCase):
         else:
             wizard.button_confirm_not_empty()
 
-        new_inventory = self.env["stock.inventory"].search([]) - old_inventories
-        return new_inventory
+        new_quant = self.env["stock.quant"].search([]) - old_quants
+        return new_quant
 
     def test_location_empty_is_empty(self):
         """Location is indicated as being empty, and it is"""
@@ -75,7 +75,8 @@ class TestPick(VerticalLiftCase):
         self.assertEqual(inventory.state, "draft")
         self.assertEqual(
             inventory.name,
-            f"{self.picking_out.name} zero check issue on location {tray_location.complete_name}",
+            f"{self.picking_out.name} zero check issue on \
+                location {tray_location.complete_name}",
         )
         self.assertEqual(inventory.product_ids, tray_product)
         self.assertEqual(inventory.location_ids, tray_location)

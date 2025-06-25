@@ -1,7 +1,7 @@
 # Copyright 2021 Camptocamp SA
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl)
 
-from odoo import _, fields, models
+from odoo import fields, models
 
 
 class VerticalLiftOperationPickZeroCheck(models.TransientModel):
@@ -32,32 +32,45 @@ class VerticalLiftOperationPickZeroCheck(models.TransientModel):
         an inventory adjustment that states that a zero-check was
         done for this location."""
         operation, picking, location, product = self._get_data_from_operation()
-        inventory_name = _(f"Zero check in location: {location.complete_name}")
-        inventory = (
-            self.env["stock.inventory"]
-            .sudo()
+        # inventory_name = self.env._(
+        # f"Zero check in location: {location.complete_name}")
+        # inventory = (
+        #     self.env["stock.inventory"]
+        #     .sudo()
+        #     .create(
+        #         {
+        #             "name": inventory_name,
+        #             "product_ids": [(4, product.id)],
+        #             "location_ids": [(4, location.id)],
+        #             "line_ids": [
+        #                 (
+        #                     0,
+        #                     0,
+        #                     {
+        #                         "product_id": product.id,
+        #                         "product_qty": 0,
+        #                         "theoretical_qty": 0,
+        #                         "location_id": location.id,
+        #                     },
+        #                 ),
+        #             ],
+        #         }
+        #     )
+        # )
+        # Change the stock.inventory creation by stock.quant
+        #  equivalent (with inventory_date etc).
+        quant = (
+            self.env["stock.quant"]
+            .with_context(inventory_mode=True)
             .create(
                 {
-                    "name": inventory_name,
-                    "product_ids": [(4, product.id)],
-                    "location_ids": [(4, location.id)],
-                    "line_ids": [
-                        (
-                            0,
-                            0,
-                            {
-                                "product_id": product.id,
-                                "product_qty": 0,
-                                "theoretical_qty": 0,
-                                "location_id": location.id,
-                            },
-                        ),
-                    ],
+                    "product_id": product.id,
+                    "inventory_quantity": 0,
+                    "location_id": location.id,
                 }
             )
         )
-        inventory.action_start()
-        inventory.action_validate()
+        quant.action_apply_inventory()
 
         # Return to the execution of the release,
         # but without checking again if the tray is empty.
@@ -71,17 +84,27 @@ class VerticalLiftOperationPickZeroCheck(models.TransientModel):
         inventory adjustment stating the mismatch.
         """
         operation, picking, location, product = self._get_data_from_operation()
-        inventory_name = _(
-            f"{picking.name} zero check issue on location {location.complete_name}"
-        )
-        self.env["stock.inventory"].sudo().create(
+        # inventory_name = self.env._(
+        #     f"{picking.name} zero check issue on location {location.complete_name}"
+        # )
+        # self.env["stock.inventory"].sudo().create(
+        #     {
+        #         "name": inventory_name,
+        #         "product_ids": [(4, product.id)],
+        #         "location_ids": [(4, location.id)],
+        #     }
+        # )
+        # Regarding the “Tray Empty” feature (that is creating a dated inventory
+        #  stating that a given tray is empty),
+        #  to check if we can do the same with stock.quant. If an empty stock.quant
+        #  record already exists for this
+        #   location/product/package/lot, maybe we just need to update its date.
+        self.env["stock.quant"].create(
             {
-                "name": inventory_name,
-                "product_ids": [(4, product.id)],
-                "location_ids": [(4, location.id)],
+                "product_id": product.id,
+                "location_id": location.id,
             }
         )
-
         # Return to the execution of the release,
         # but without checking again if the tray is empty.
         return operation.with_context(skip_zero_quantity_check=True).button_release()
