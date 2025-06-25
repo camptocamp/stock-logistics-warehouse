@@ -16,7 +16,7 @@ class TestPick(VerticalLiftCase):
             "vertical_lift_empty_tray_check", True
         )
 
-    def _test_location_empty_common(self, operation, tray_is_empty):
+    def _test_location_empty_common(self, operation, tray_product, tray_is_empty):
         """Common part for tests checking the tray location is empty
 
         Returns the new inventory adjustment created."""
@@ -31,28 +31,30 @@ class TestPick(VerticalLiftCase):
         self.assertEqual(operation.state, "release")
         self.assertEqual(operation.tray_qty, 0)
 
-        old_inventories = self.env["stock.inventory"].search([])
-
         res_dict = operation.button_release()
         wizard = self.env[(res_dict.get("res_model"))].browse(res_dict.get("res_id"))
         wizard = wizard.with_context(
             active_id=operation.id, active_model=operation._name
         )
+        # breakpoint()
+        wizard.get_existing_quant()
         if tray_is_empty:
             wizard.button_confirm_empty()
         else:
             wizard.button_confirm_not_empty()
 
-        new_inventory = self.env["stock.inventory"].search([]) - old_inventories
-        return new_inventory
+        quants = wizard.get_existing_quant()
+        # breakpoint()
+        return quants
 
     def test_location_empty_is_empty(self):
         """Location is indicated as being empty, and it is"""
         operation = self._open_screen("pick")
         tray_location = operation.tray_location_id
         tray_product = operation.current_move_line_id.product_id
-        inventory = self._test_location_empty_common(operation, tray_is_empty=True)
-
+        inventory = self._test_location_empty_common(
+            operation, tray_product, tray_is_empty=True
+        )
         self.assertEqual(len(inventory), 1)
         self.assertEqual(inventory.state, "done")
         self.assertEqual(
@@ -70,12 +72,15 @@ class TestPick(VerticalLiftCase):
         operation = self._open_screen("pick")
         tray_location = operation.tray_location_id
         tray_product = operation.current_move_line_id.product_id
-        inventory = self._test_location_empty_common(operation, tray_is_empty=False)
+        inventory = self._test_location_empty_common(
+            operation, tray_product, tray_is_empty=False
+        )
         self.assertEqual(len(inventory), 1)
         self.assertEqual(inventory.state, "draft")
         self.assertEqual(
             inventory.name,
-            f"{self.picking_out.name} zero check issue on location {tray_location.complete_name}",
+            f"{self.picking_out.name} zero check issue on \
+                location {tray_location.complete_name}",
         )
         self.assertEqual(inventory.product_ids, tray_product)
         self.assertEqual(inventory.location_ids, tray_location)
