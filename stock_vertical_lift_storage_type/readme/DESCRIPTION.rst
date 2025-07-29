@@ -1,4 +1,5 @@
-Compatibility layer between Stock Vertical Lift and Putaway Storage Types (OCA/wms).
+Compatibility layer between Stock Vertical Lift and Putaway Storage Types
+(OCA/stock-logistics-putaway).
 
 In the vertical lift's Putaway screen, when a good is scanned for a putaway, the
 user has to scan the tray type of the corresponding size, so an empty place in a
