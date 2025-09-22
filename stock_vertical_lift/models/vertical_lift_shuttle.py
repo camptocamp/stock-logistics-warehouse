@@ -81,8 +81,8 @@ class VerticalLiftShuttle(models.Model):
 
         """
         self.ensure_one()
-        _logger.info("send %r", payload)
         command_values = {"shuttle_id": self.id, "command": payload.decode()}
+        _logger.info("send %(command)r", command_values)
 
         self.env["vertical.lift.command"].sudo().create(command_values)
         if self.hardware == "simulation":
