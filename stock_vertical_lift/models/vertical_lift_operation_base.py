@@ -25,8 +25,8 @@ def split_other_move_lines(move, move_lines):
         backorder_move = move.create(backorder_move_vals)
         if not backorder_move:
             return False
-        backorder_move._action_confirm(merge=False)
         backorder_move.move_line_ids = other_move_lines
+        backorder_move._action_confirm(merge=False)
         backorder_move._recompute_state()
         backorder_move._action_assign()
         move._recompute_state()
