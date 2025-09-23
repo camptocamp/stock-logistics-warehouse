@@ -34,6 +34,15 @@ def split_other_move_lines(move, move_lines):
     return False
 
 
+def set_picking_location_dest(picking, location):
+    """Set location_dest_id on the picking and related moves."""
+    if picking.location_dest_id != location:
+        picking.location_dest_id = location.id
+    moves = picking.move_ids.filtered(lambda mv: mv.location_dest_id != location)
+    if moves:
+        moves["location_dest_id"] = location.id
+
+
 def extract_and_action_done(move):
     """Extract the moves in a separate transfer and validate them.
 
@@ -52,6 +61,7 @@ def extract_and_action_done(move):
         return False
     for picking in moves.picking_id:
         moves_todo = picking.move_ids & moves
+        location_dest = moves_todo.move_line_ids.location_dest_id[0]
         if moves_todo == picking.move_ids:
             # No need to create a new transfer if we are processing all moves
             new_picking = picking
@@ -72,6 +82,7 @@ def extract_and_action_done(move):
             )
             new_picking.action_assign()
             assert new_picking.state == "assigned"
+        set_picking_location_dest(new_picking, location_dest)
         new_picking.button_validate()
     return True
 
