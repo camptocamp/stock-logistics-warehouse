@@ -74,10 +74,9 @@ def extract_and_action_done(move):
             moves_todo.package_level_id.picking_id = new_picking.id
             moves_todo.move_line_ids.picking_id = new_picking.id
             moves_todo.move_line_ids.package_level_id.picking_id = new_picking.id
-            moves_todo._action_assign()
+            if moves_todo.state != "assigned":
+                moves_todo._action_assign()
             assert new_picking.state == "assigned"
-        # Set the destination on the Picking too
-        new_picking.location_dest_id = moves_todo.move_line_ids[0].location_dest_id
         new_picking.button_validate()
     return True
 
