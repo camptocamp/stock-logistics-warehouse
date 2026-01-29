@@ -210,7 +210,7 @@ class VerticalLiftOperationInventory(models.Model):
 
     def fetch_tray(self):
         location = self.quant_id.location_id
-        location.fetch_vertical_lift_tray()
+        location.fetch_vertical_lift_tray(shuttle=self.shuttle_id)
 
     def select_next_inventory_line(self):
         self.ensure_one()
