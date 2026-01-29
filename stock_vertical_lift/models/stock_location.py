@@ -28,7 +28,7 @@ class StockLocation(models.Model):
     # give the unique shuttle for any location in the tree (whether it's a
     # shuttle, a tray or a cell)
     inverse_vertical_lift_shuttle_ids = fields.One2many(
-        comodel_name="vertical.lift.shuttle", inverse_name="location_id"
+        comodel_name="vertical.lift.shuttle", inverse_name="shared_storage_location_id"
     )
     # compute the unique shuttle for any shuttle, tray or cell location, by
     # going through the parents
@@ -36,11 +36,14 @@ class StockLocation(models.Model):
         comodel_name="vertical.lift.shuttle",
         compute="_compute_vertical_lift_shuttle_id",
         recursive=True,
-        store=True,
+        store=False,
     )
 
     @api.depends(
-        "location_id", "location_id.vertical_lift_kind", "vertical_lift_location"
+        "location_id",
+        "location_id.vertical_lift_kind",
+        "vertical_lift_location",
+        "inverse_vertical_lift_shuttle_ids.shared_storage_location_id",
     )
     def _compute_vertical_lift_kind(self):
         tree = {"view": "shuttle", "shuttle": "tray", "tray": "cell"}
@@ -48,27 +51,40 @@ class StockLocation(models.Model):
             if location.vertical_lift_location:
                 location.vertical_lift_kind = "view"
                 continue
+            # If a shuttle points to this location via ``shared_storage_location_id``,
+            # it is a 'shuttle' kind
+            if location.inverse_vertical_lift_shuttle_ids:
+                location.vertical_lift_kind = "shuttle"
+                continue
             kind = tree.get(location.location_id.vertical_lift_kind, False)
             location.vertical_lift_kind = kind
 
     @api.depends(
         "inverse_vertical_lift_shuttle_ids", "location_id.vertical_lift_shuttle_id"
     )
+    @api.depends_context("shuttle_id")
     def _compute_vertical_lift_shuttle_id(self):
+        shuttle_id = self.env.context.get("shuttle_id")
         for location in self:
-            if location.inverse_vertical_lift_shuttle_ids:
-                # we have a unique constraint on the other side
-                assert len(location.inverse_vertical_lift_shuttle_ids) == 1
+            if len(location.inverse_vertical_lift_shuttle_ids) == 1:
                 shuttle = location.inverse_vertical_lift_shuttle_ids
             else:
+                shuttle = self.env["vertical.lift.shuttle"].browse(shuttle_id)
+            # Fallback: If still no shuttle, try the parent
+            if not shuttle and location.location_id:
                 shuttle = location.location_id.vertical_lift_shuttle_id
             location.vertical_lift_shuttle_id = shuttle
 
-    def _hardware_vertical_lift_fetch_tray(self, cell_location=None):
-        payload = self._hardware_vertical_lift_fetch_tray_payload(cell_location)
-        return self.vertical_lift_shuttle_id._hardware_send_message(payload)
+    def _hardware_vertical_lift_fetch_tray(self, cell_location=None, shuttle=None):
+        shuttle = shuttle or self.vertical_lift_shuttle_id
+        payload = self._hardware_vertical_lift_fetch_tray_payload(
+            cell_location=cell_location, shuttle=shuttle
+        )
+        return shuttle._hardware_send_message(payload)
 
-    def _hardware_vertical_lift_fetch_tray_payload(self, cell_location=None):
+    def _hardware_vertical_lift_fetch_tray_payload(
+        self, cell_location=None, shuttle=None
+    ):
         """Prepare "fetch" message to be sent to the vertical lift hardware
 
         Private method, this is where the implementation actually happens.
@@ -107,7 +123,8 @@ class StockLocation(models.Model):
         Returns a message in bytes, that will be sent through
         ``VerticalLiftShuttle._hardware_send_message()``.
         """
-        if self.vertical_lift_shuttle_id.hardware == "simulation":
+        shuttle = shuttle or self.vertical_lift_shuttle_id
+        if shuttle.hardware == "simulation":
             message = self.env._("Opening tray %(name)s.", name=self.name)
             if cell_location:
                 from_left, from_bottom = cell_location.tray_cell_center_position()
@@ -122,7 +139,7 @@ class StockLocation(models.Model):
         else:
             raise NotImplementedError()
 
-    def fetch_vertical_lift_tray(self, cell_location=None):
+    def fetch_vertical_lift_tray(self, cell_location=None, shuttle=None):
         """Send instructions to the vertical lift hardware to fetch a tray
 
         Public method to use for:
@@ -136,15 +153,33 @@ class StockLocation(models.Model):
         ``_hardware_vertical_lift_fetch_tray()``.
         """
         self.ensure_one()
+        if shuttle is None:
+            if len(self.inverse_vertical_lift_shuttle_ids) == 1:
+                shuttle = self.inverse_vertical_lift_shuttle_ids
+            else:
+                shuttle = self.env["vertical.lift.shuttle"].browse(
+                    self.env.context.get("shuttle_id")
+                )
+
+        if not shuttle:
+            raise exceptions.UserError(
+                self.env._(
+                    "The operation on location %s is ambiguous. "
+                    "Unable to determine which shuttle to use.",
+                    self.name,
+                )
+            )
         if self.vertical_lift_kind == "cell":
             if cell_location:
                 raise ValueError(
                     "cell_location cannot be set when the location is a cell."
                 )
             tray = self.location_id
-            tray.fetch_vertical_lift_tray(cell_location=self)
+            tray.fetch_vertical_lift_tray(cell_location=self, shuttle=shuttle)
         elif self.vertical_lift_kind == "tray":
-            self._hardware_vertical_lift_fetch_tray(cell_location=cell_location)
+            self._hardware_vertical_lift_fetch_tray(
+                cell_location=cell_location, shuttle=shuttle
+            )
         else:
             raise exceptions.UserError(
                 self.env._(

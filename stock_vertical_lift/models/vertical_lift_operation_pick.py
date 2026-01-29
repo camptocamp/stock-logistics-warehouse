@@ -86,7 +86,10 @@ class VerticalLiftOperationPick(models.Model):
         return domain
 
     def fetch_tray(self):
-        self.current_move_line_id.fetch_vertical_lift_tray_source()
+        # TODO: is it the way to inject the shuttle?
+        self.current_move_line_id.with_context(
+            shuttle_id=self.shuttle_id.id
+        ).fetch_vertical_lift_tray_source()
 
     def _get_next_move_line(self, order):
         def get_next(move_lines, current_move_line):
