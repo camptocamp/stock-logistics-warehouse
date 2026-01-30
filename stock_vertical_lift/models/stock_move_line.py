@@ -14,12 +14,52 @@ class StockMoveLine(models.Model):
         "skip its processing.",
     )
 
-    def fetch_vertical_lift_tray_source(self):
+    def _get_shuttles(self, location):
         self.ensure_one()
-        self.location_id.fetch_vertical_lift_tray()
-        return {"type": "ir.actions.client", "tag": "soft_reload"}
+        # Reached the top of hierarchy without finding a shuttle
+        if not location:
+            return self.env["vertical.lift.shuttle"]
+        # Found a location linked to a shuttle
+        if shuttles := location.inverse_vertical_lift_shuttle_ids:
+            return shuttles
+        # Check the parent location
+        return self._get_shuttles(location.location_id)
 
-    def fetch_vertical_lift_tray_dest(self):
+    def fetch_vertical_lift_tray_source(self, shuttle=None):
         self.ensure_one()
-        self.location_dest_id.fetch_vertical_lift_tray()
-        return {"type": "ir.actions.client", "tag": "soft_reload"}
+        location = self.location_id
+        if shuttle:
+            location.fetch_vertical_lift_tray(shuttle=shuttle)
+            return {"type": "ir.actions.client", "tag": "soft_reload"}
+        shuttles = self._get_shuttles(location)
+        if len(shuttles) == 1:
+            location.fetch_vertical_lift_tray(shuttle=shuttles)
+            return {"type": "ir.actions.client", "tag": "soft_reload"}
+        return self._open_shuttle_selector(location, "fetch_vertical_lift_tray_source")
+
+    def fetch_vertical_lift_tray_dest(self, shuttle=None):
+        self.ensure_one()
+        location = self.location_dest_id
+        if shuttle:
+            location.fetch_vertical_lift_tray(shuttle=shuttle)
+            return {"type": "ir.actions.client", "tag": "soft_reload"}
+        shuttles = self._get_shuttles(location)
+        if len(shuttles) == 1:
+            location.fetch_vertical_lift_tray(shuttle=shuttles)
+            return {"type": "ir.actions.client", "tag": "soft_reload"}
+        return self._open_shuttle_selector(location, "fetch_vertical_lift_tray_dest")
+
+    def _open_shuttle_selector(self, location, method_name):
+        return {
+            "name": self.env._("Select Shuttle for %s", location.name),
+            "type": "ir.actions.act_window",
+            "res_model": "vertical.lift.select.shuttle",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_location_id": location.id,
+                "default_res_model": self._name,
+                "default_res_id": self.id,
+                "default_method_name": method_name,
+            },
+        }
