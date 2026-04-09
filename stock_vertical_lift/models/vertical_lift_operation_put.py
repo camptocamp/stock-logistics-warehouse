@@ -140,6 +140,23 @@ class VerticalLiftOperationPut(models.Model):
             [self._domain_move_lines_to_do_all(), [("package_id", "in", package.ids)]]
         )
         lines = self.env["stock.move.line"].search(domain)
+        print("=" * 1000)
+        print("package found")
+        print(domain)
+        print(lines)
+        print("---")
+        test_lines = self.env["stock.move.line"].search([("package_id", "in", package.ids)])
+        print(test_lines)
+        print("---")
+        picking = self.env["stock.picking"].browse(4902493)
+        print(picking)
+        print(picking.move_ids)
+        print(picking.move_line_ids)
+        
+        for m in picking.move_line_ids:
+            print(f"\t{m.id}: {m.state} - {m.location_dest_id} - {m.package_id}")
+        print("---")
+
         if len(lines) > 1:
             # Multiple move lines in the same package,
             # they need to be merged if possible
