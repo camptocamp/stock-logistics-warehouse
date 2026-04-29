@@ -252,7 +252,7 @@ class VerticalLiftOperationBase(models.AbstractModel):
     def onchange(self, values, field_names, field_onchange):
         if "_barcode_scanned" not in field_names:
             return super().onchange(values, field_names, field_onchange)
-        
+
         # _barcode_scanner is implemented (in the barcodes module) as an
         # onchange, which is really annoying when we want it to act as a
         # normal button and actually have side effect in the database
@@ -281,7 +281,7 @@ class VerticalLiftOperationBase(models.AbstractModel):
 
     def action_manual_barcode(self):
         return self.shuttle_id.action_manual_barcode()
-    
+
     def switch_pick(self):
         return self.shuttle_id.switch_pick()
 
@@ -308,6 +308,18 @@ class VerticalLiftOperationBase(models.AbstractModel):
     def button_release(self):
         """Release the operation, go to the next"""
         self.ensure_one()
+        if not self.step() == "release":
+            return
+        return self.next_step()
+
+    def button_save_and_release(self):
+        """Confirm the operation (set move to done, ...)"""
+        self.ensure_one()
+        # Copy the code instead of calling button_save/release
+        #   because we still need to check the current step
+        if not self.step() == "save":
+            return
+        self.next_step()
         if not self.step() == "release":
             return
         return self.next_step()
