@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ==============================
 Vertical Lift Empty Tray Check
 ==============================
@@ -17,7 +13,7 @@ Vertical Lift Empty Tray Check
 .. |badge1| image:: https://img.shields.io/badge/maturity-Alpha-red.png
     :target: https://odoo-community.org/page/development-status
     :alt: Alpha
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fstock--logistics--warehouse-lightgray.png?logo=github
@@ -55,6 +51,13 @@ General
 
 In Inventory Settings, you must have activated the option: *Check Empty
 Tray*
+
+Barcodes
+--------
+
+The operations allowed in the screen for the vertical lift (confirm tray
+is empty / not empty) can be triggered using a barcode. For this, print
+the barcodes contained in the folder 'images'.
 
 Bug Tracker
 ===========
