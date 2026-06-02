@@ -300,7 +300,7 @@ class VerticalLiftOperationBase(models.AbstractModel):
         self.ensure_one()
         if not self.step() == "save":
             return
-        self.next_step()
+        return self.next_step()
 
     def button_release(self):
         """Release the operation, go to the next"""
@@ -312,14 +312,14 @@ class VerticalLiftOperationBase(models.AbstractModel):
     def button_save_and_release(self):
         """Confirm the operation (set move to done, ...)"""
         self.ensure_one()
-        # Copy the code instead of calling button_save/release
-        #   because we still need to check the current step
         if not self.step() == "save":
             return
-        self.next_step()
+        res = self.button_save()
+        if isinstance(res, dict):
+            return res
         if not self.step() == "release":
             return
-        return self.next_step()
+        return self.button_release()
 
     def _render_product_packagings(self, product):
         if not product:
