@@ -1,2 +1,4 @@
 odoo-addon-stock_warehouse_lock_location @ git+https://github.com/OCA/stock-logistics-warehouse.git@refs/pull/2729/head#subdirectory=stock_warehouse_lock_location
 odoo-addon-stock_warehouse_stock_type @ git+https://github.com/camptocamp/stock-logistics-warehouse.git@19-add-stock_warehouse_stock_type#subdirectory=stock_warehouse_stock_type
+odoo-addon-stock_warehouse_stock_type @ git+https://github.com/camptocamp/stock-logistics-warehouse.git@19-add-stock_warehouse_stock_type#subdirectory=stock_warehouse_stock_type
+odoo-addon-stock_external_inventory_report @ git+https://github.com/camptocamp/stock-logistics-warehouse.git@19-add-stock_external_inventory_report#subdirectory=stock_external_inventory_report
